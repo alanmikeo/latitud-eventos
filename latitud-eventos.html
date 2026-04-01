@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latitud Eventos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black:   #080808;
+  --dark:    #0F0F0F;
+  --dark2:   #161616;
+  --dark3:   #1E1E1E;
+  --white:   #F4F4F4;
+  --white2:  #C8C8C8;
+  --white3:  rgba(244,244,244,0.45);
+  --white4:  rgba(244,244,244,0.07);
+  --border:  rgba(244,244,244,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+.eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--white2);
+  display: block;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 30px 64px;
+  transition: all 0.5s ease;
+}
+nav.scrolled {
+  background: rgba(8,8,8,0.94);
+  backdrop-filter: blur(20px);
+  padding: 18px 64px;
+  border-bottom: 1px solid var(--border);
+}
+.logo { text-decoration: none; }
+.logo-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--white); display: block; line-height: 1;
+}
+.logo-tagline {
+  font-size: 0.52rem; letter-spacing: 0.38em;
+  text-transform: uppercase; color: var(--white2);
+  margin-top: 4px; display: block; font-weight: 400;
+}
+.nav-links { display: flex; gap: 44px; list-style: none; }
+.nav-links a {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--white2);
+  text-decoration: none; font-weight: 500;
+  transition: color 0.25s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.6rem; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--black); background: var(--white);
+  padding: 11px 26px; text-decoration: none;
+  transition: opacity 0.25s; display: inline-block;
+}
+.nav-btn:hover { opacity: 0.82; }
+
+/* ─── HERO ─── */
+#hero {
+  position: relative;
+  height: 100vh; min-height: 640px;
+  display: flex; align-items: flex-end;
+  overflow: hidden;
+}
+.hero-media { position: absolute; inset: 0; z-index: 0; }
+.hero-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg,
+    rgba(8,8,8,0.72) 0%,
+    rgba(8,8,8,0.42) 50%,
+    rgba(8,8,8,0.78) 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 64px 88px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: flex-end;
+  width: 100%; gap: 40px;
+}
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 24px;
+  opacity: 0; animation: fadeUp 0.9s ease forwards; animation-delay: 0.4s;
+}
+.hero-rule { width: 32px; height: 1px; background: var(--white2); }
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  font-weight: 600; line-height: 1.06;
+  letter-spacing: -0.02em; margin-bottom: 36px;
+  opacity: 0; animation: fadeUp 0.9s ease forwards; animation-delay: 0.6s;
+}
+.hero-title em {
+  font-style: italic; font-family: 'DM Sans', sans-serif;
+  font-weight: 300; color: var(--white2);
+}
+.hero-actions {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.9s ease forwards; animation-delay: 0.8s;
+}
+.btn-white {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.6rem; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--black); background: var(--white);
+  padding: 15px 36px; border: none;
+  text-decoration: none; cursor: pointer;
+  transition: opacity 0.25s, transform 0.25s; display: inline-block;
+}
+.btn-white:hover { opacity: 0.85; transform: translateY(-2px); }
+.btn-ghost {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.6rem; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--white2); background: transparent;
+  padding: 14px 36px;
+  border: 1px solid rgba(244,244,244,0.25);
+  text-decoration: none; transition: all 0.25s; display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--white); color: var(--white); }
+.hero-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 24px;
+  opacity: 0; animation: fadeUp 0.9s ease forwards; animation-delay: 1s;
+}
+.hero-desc {
+  font-size: 0.9rem; line-height: 1.85;
+  color: var(--white3); font-weight: 300;
+  max-width: 340px; text-align: right;
+}
+.hero-badge {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(244,244,244,0.06);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  padding: 14px 20px;
+}
+.badge-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.badge-text { font-size: 0.68rem; color: var(--white2); line-height: 1.4; font-weight: 300; }
+.hero-scroll {
+  position: absolute; bottom: 40px; left: 50%;
+  transform: translateX(-50%); z-index: 3;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  opacity: 0; animation: fadeUp 1s ease forwards; animation-delay: 1.3s;
+}
+.scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, rgba(244,244,244,0.45), transparent); }
+.scroll-label { font-family: 'Syne', sans-serif; font-size: 0.5rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--white2); writing-mode: vertical-rl; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── STATS ─── */
+.stats-strip {
+  background: var(--dark2);
+  border-bottom: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+}
+.stat-item {
+  padding: 36px 48px;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--white); line-height: 1; margin-bottom: 6px; }
+.stat-desc { font-size: 0.72rem; color: var(--white2); font-weight: 300; }
+
+/* ─── REVEAL ─── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+.reveal.on { opacity: 1; transform: none; }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.3s; }
+
+/* ─── SOBRE ─── */
+#sobre { background: var(--dark); padding: 130px 64px; }
+.sobre-wrap {
+  display: grid; grid-template-columns: 5fr 7fr;
+  gap: 96px; align-items: center;
+  max-width: 1380px; margin: 0 auto;
+}
+.sobre-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  font-weight: 600; line-height: 1.1;
+  letter-spacing: -0.02em; margin-bottom: 28px; margin-top: 20px;
+}
+.sobre-title em { font-style: italic; font-weight: 300; color: var(--white2); font-family: 'DM Sans', sans-serif; }
+.sobre-text { font-size: 0.92rem; line-height: 1.95; color: var(--white3); font-weight: 300; margin-bottom: 44px; }
+.sobre-img { width: 100%; height: 560px; object-fit: cover; display: block; }
+.sobre-img-wrap { position: relative; }
+.sobre-counter {
+  position: absolute; bottom: -22px; left: -22px;
+  background: var(--white); color: var(--black);
+  width: 136px; height: 136px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.counter-n { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 700; line-height: 1; }
+.counter-l { font-size: 0.56rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #555; margin-top: 5px; }
+
+/* ─── ESPAÇOS ─── */
+#espacos { background: var(--black); padding: 130px 64px; }
+.section-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 0; padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+  max-width: 1380px; margin: 0 auto 56px;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  font-weight: 600; letter-spacing: -0.02em; line-height: 1.06;
+}
+.section-title em { font-style: italic; font-weight: 300; font-family: 'DM Sans', sans-serif; color: var(--white2); }
+.section-desc { font-size: 0.86rem; color: var(--white2); max-width: 300px; line-height: 1.7; text-align: right; font-weight: 300; }
+.espacos-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 2px; max-width: 1380px; margin: 0 auto;
+}
+.espaco-card { position: relative; overflow: hidden; cursor: pointer; height: 520px; }
+.espaco-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(.25,.46,.45,.94); display: block; }
+.espaco-card:hover .espaco-img { transform: scale(1.06); }
+.espaco-shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,8,8,0.94) 0%, rgba(8,8,8,0.18) 60%, transparent 100%);
+  padding: 32px 28px; display: flex; flex-direction: column; justify-content: flex-end;
+  transition: background 0.5s;
+}
+.espaco-card:hover .espaco-shade { background: linear-gradient(to top, rgba(8,8,8,0.97) 0%, rgba(8,8,8,0.5) 60%, rgba(8,8,8,0.15) 100%); }
+.espaco-idx { font-family: 'Syne', sans-serif; font-size: 0.54rem; font-weight: 600; letter-spacing: 0.38em; text-transform: uppercase; color: var(--white2); margin-bottom: 12px; }
+.espaco-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 600; line-height: 1.1; margin-bottom: 8px; }
+.espaco-cap { font-size: 0.78rem; color: var(--white2); margin-bottom: 20px; font-weight: 300; }
+.espaco-attrs { display: flex; flex-wrap: wrap; gap: 7px; transform: translateY(14px); opacity: 0; transition: all 0.35s ease; }
+.espaco-card:hover .espaco-attrs { transform: translateY(0); opacity: 1; }
+.attr { font-family: 'Syne', sans-serif; font-size: 0.52rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; border: 1px solid rgba(244,244,244,0.22); color: var(--white2); padding: 5px 10px; }
+
+/* ─── GALERIA ─── */
+#galeria { background: var(--dark2); padding: 130px 0 0; }
+.galeria-hd { padding: 0 64px 52px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+.galeria-note { font-size: 0.8rem; color: var(--white2); font-weight: 300; font-style: italic; }
+.gallery-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 300px 280px; gap: 2px; }
+.gi { overflow: hidden; position: relative; }
+.gi:first-child { grid-row: span 2; }
+.gi:nth-child(4) { grid-column: span 2; }
+.gi img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.65s ease; }
+.gi:hover img { transform: scale(1.05); }
+.gi-veil { position: absolute; inset: 0; background: transparent; transition: background 0.4s; }
+.gi:hover .gi-veil { background: rgba(244,244,244,0.04); }
+
+/* ─── DEPOIMENTOS ─── */
+#depoimentos { background: var(--dark); padding: 130px 64px; }
+.depo-wrap { max-width: 1380px; margin: 0 auto; }
+.depo-top { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 64px; padding-bottom: 64px; border-bottom: 1px solid var(--border); }
+.depo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.depo-card { background: var(--dark2); padding: 44px 36px; border-top: 1px solid transparent; transition: all 0.3s; }
+.depo-card:hover { background: var(--dark3); border-top-color: var(--white); }
+.depo-open { font-family: 'DM Sans', sans-serif; font-size: 3.5rem; font-weight: 300; color: var(--white2); opacity: 0.2; line-height: 0.8; margin-bottom: 18px; }
+.depo-stars { display: flex; gap: 3px; margin-bottom: 20px; }
+.star { font-size: 0.72rem; color: var(--white); }
+.depo-body { font-size: 0.9rem; line-height: 1.82; color: rgba(244,244,244,0.62); font-weight: 300; font-style: italic; margin-bottom: 32px; }
+.depo-rule { width: 20px; height: 1px; background: var(--white2); margin-bottom: 18px; }
+.depo-name { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 5px; }
+.depo-evt { font-size: 0.7rem; color: var(--white2); font-weight: 300; }
+
+/* ─── ORÇAMENTO ─── */
+#orcamento { background: var(--black); padding: 130px 64px; }
+.orc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; max-width: 1380px; margin: 0 auto; }
+.orc-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 3.2vw, 2.8rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.06; margin-bottom: 24px; margin-top: 20px; }
+.orc-title em { font-style: italic; font-weight: 300; font-family: 'DM Sans', sans-serif; color: var(--white2); }
+.orc-desc { font-size: 0.9rem; line-height: 1.9; color: var(--white3); font-weight: 300; margin-bottom: 52px; }
+.contact-list { display: flex; flex-direction: column; }
+.c-row { display: flex; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.c-ico { width: 42px; height: 42px; flex-shrink: 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.c-lbl { font-family: 'Syne', sans-serif; font-size: 0.55rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white2); margin-bottom: 4px; }
+.c-val { font-size: 0.88rem; color: var(--white); font-weight: 400; }
+.form-box { background: var(--dark2); padding: 52px 48px; border-top: 2px solid var(--white); }
+.form-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 6px; }
+.form-sub { font-size: 0.73rem; color: var(--white2); margin-bottom: 36px; font-weight: 300; }
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.f-g { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+.f-g label { font-family: 'Syne', sans-serif; font-size: 0.54rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white2); }
+.f-g input, .f-g select, .f-g textarea { background: rgba(244,244,244,0.03); border: 1px solid var(--border); color: var(--white); padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.3s, background 0.3s; width: 100%; }
+.f-g input:focus, .f-g select:focus, .f-g textarea:focus { border-color: var(--white); background: rgba(244,244,244,0.05); }
+.f-g select option { background: var(--dark2); }
+.f-g textarea { resize: vertical; min-height: 100px; }
+.f-submit { width: 100%; background: var(--white); color: var(--black); border: none; padding: 17px; font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; cursor: pointer; transition: all 0.25s; margin-top: 6px; }
+.f-submit:hover { opacity: 0.85; transform: translateY(-2px); }
+.f-note { font-size: 0.64rem; color: var(--white3); text-align: center; margin-top: 14px; }
+
+/* ─── FOOTER ─── */
+footer { background: #030303; border-top: 1px solid var(--border); padding: 72px 64px 40px; }
+.ft-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 64px; border-bottom: 1px solid var(--border); margin-bottom: 40px; max-width: 1380px; margin-left: auto; margin-right: auto; }
+.ft-brand-name { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.ft-brand-tag { font-size: 0.52rem; letter-spacing: 0.36em; text-transform: uppercase; color: var(--white2); margin: 5px 0 18px; display: block; }
+.ft-brand-p { font-size: 0.82rem; line-height: 1.8; color: rgba(244,244,244,0.28); max-width: 280px; font-weight: 300; }
+.ft-col h4 { font-family: 'Syne', sans-serif; font-size: 0.56rem; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase; color: var(--white2); margin-bottom: 22px; }
+.ft-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.ft-col ul a { font-size: 0.82rem; color: rgba(244,244,244,0.35); text-decoration: none; transition: color 0.25s; }
+.ft-col ul a:hover { color: var(--white); }
+.ft-bottom { display: flex; justify-content: space-between; align-items: center; max-width: 1380px; margin: 0 auto; }
+.ft-copy { font-size: 0.68rem; color: rgba(244,244,244,0.18); letter-spacing: 0.04em; }
+.socials { display: flex; gap: 10px; }
+.soc { width: 36px; height: 36px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--white2); text-decoration: none; font-family: 'Syne', sans-serif; font-size: 0.62rem; font-weight: 700; transition: all 0.25s; }
+.soc:hover { background: var(--white); color: var(--black); border-color: var(--white); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1100px) {
+  nav, nav.scrolled { padding: 20px 40px; }
+  #sobre, #espacos, #depoimentos, #orcamento { padding: 100px 40px; }
+  #galeria { padding: 100px 0 0; }
+  .galeria-hd { padding: 0 40px 44px; }
+  .sobre-wrap { grid-template-columns: 1fr; gap: 56px; }
+  .sobre-img { height: 400px; }
+  .section-header, .orc-wrap { gap: 40px; }
+  .espacos-grid { grid-template-columns: 1fr 1fr; }
+  .espaco-card { height: 420px; }
+  .depo-grid { grid-template-columns: 1fr; max-width: 540px; }
+  .depo-top { grid-template-columns: 1fr; gap: 28px; }
+  .orc-wrap { grid-template-columns: 1fr; }
+  .ft-top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-btn { display: none; }
+  nav, nav.scrolled { padding: 20px 24px; }
+  #sobre, #espacos, #depoimentos, #orcamento { padding: 80px 24px; }
+  .galeria-hd { padding: 0 24px 40px; }
+  .hero-content { grid-template-columns: 1fr; padding: 0 24px 72px; }
+  .hero-right { align-items: flex-start; }
+  .hero-desc { text-align: left; }
+  .stats-strip { grid-template-columns: 1fr 1fr; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .section-desc { text-align: left; max-width: 100%; }
+  .espacos-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 190px); }
+  .gi:first-child { grid-row: auto; grid-column: span 2; }
+  .gi:nth-child(4) { grid-column: auto; }
+  .f-row { grid-template-columns: 1fr; }
+  .form-box { padding: 36px 24px; }
+  .ft-top { grid-template-columns: 1fr; gap: 40px; }
+  .ft-bottom { flex-direction: column; gap: 20px; }
+  .hero-scroll { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="logo">
+    <span class="logo-name">Latitud</span>
+    <span class="logo-tagline">Chácara de Eventos</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#sobre">O Espaço</a></li>
+    <li><a href="#espacos">Ambientes</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#depoimentos">Depoimentos</a></li>
+  </ul>
+  <a href="#orcamento" class="nav-btn">Orçamento</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-media">
+    <!--
+      COMO PERSONALIZAR:
+      • Troque o src do <source> pelo vídeo real do salão (ex: ./assets/video-latitud.mp4)
+      • O atributo poster é a foto exibida enquanto o vídeo carrega — ideal para mobile
+      • Em mobile, a maioria dos browsers não faz autoplay; o poster funciona como fallback automático
+    -->
+    <video class="hero-video"
+      autoplay muted loop playsinline
+      poster="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1800&q=85">
+      <source src="https://videos.pexels.com/video-files/3255244/3255244-hd_1280_720_25fps.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="hero-rule"></div>
+        <span class="eyebrow">Chácara Latitud Eventos</span>
+      </div>
+      <h1 class="hero-title">
+        O cenário<br>perfeito para<br><em>cada momento</em>
+      </h1>
+      <div class="hero-actions">
+        <a href="#orcamento" class="btn-white">Solicitar Orçamento</a>
+        <a href="#espacos" class="btn-ghost">Ver Ambientes</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">
+        Um espaço pensado para que cada detalhe da sua celebração seja exatamente como você imaginou — com estrutura completa e atendimento dedicado.
+      </p>
+      <div class="hero-badge">
+        <div class="badge-num">2.000+</div>
+        <div class="badge-text">eventos<br>realizados</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-label">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip reveal">
+  <div class="stat-item"><div class="stat-num">15+</div><div class="stat-desc">Anos de história</div></div>
+  <div class="stat-item"><div class="stat-num">800</div><div class="stat-desc">Capacidade máxima</div></div>
+  <div class="stat-item"><div class="stat-num">1.200 m²</div><div class="stat-desc">Área total</div></div>
+  <div class="stat-item"><div class="stat-num">2.000+</div><div class="stat-desc">Eventos realizados</div></div>
+</div>
+
+<!-- SOBRE -->
+<section id="sobre">
+  <div class="sobre-wrap">
+    <div>
+      <span class="eyebrow reveal">O Espaço</span>
+      <h2 class="sobre-title reveal d1">Mais que<br>um lugar.<br><em>Uma memória.</em></h2>
+      <p class="sobre-text reveal d2">A Chácara Latitud Eventos nasceu da vontade de criar um lugar onde cada celebração pudesse acontecer sem concessões. Com estrutura completa, equipe dedicada e um ambiente que combina sofisticação com acolhimento, tornamos cada evento em algo verdadeiramente único.</p>
+      <a href="#orcamento" class="btn-white reveal d3">Fale com a Equipe</a>
+    </div>
+    <div class="sobre-img-wrap reveal d2">
+      <img class="sobre-img" src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=900&q=80" alt="Interior Latitud">
+      <div class="sobre-counter"><div class="counter-n">15+</div><div class="counter-l">Anos de<br>Excelência</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ESPAÇOS -->
+<section id="espacos">
+  <div class="section-header reveal">
+    <div>
+      <span class="eyebrow" style="margin-bottom:16px;">Ambientes</span>
+      <h2 class="section-title">Escolha<br><em>seu espaço</em></h2>
+    </div>
+    <p class="section-desc">Três ambientes para que o tamanho e o estilo do seu evento encontrem o cenário ideal.</p>
+  </div>
+  <div class="espacos-grid" style="max-width:1380px;margin:0 auto;">
+    <div class="espaco-card reveal">
+      <img class="espaco-img" src="https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?w=900&q=80" alt="Salão Principal">
+      <div class="espaco-shade">
+        <div class="espaco-idx">01 — Principal</div>
+        <div class="espaco-name">Salão Imperial</div>
+        <div class="espaco-cap">Até 800 convidados</div>
+        <div class="espaco-attrs"><span class="attr">Iluminação Cênica</span><span class="attr">Palco</span><span class="attr">Pista de Dança</span><span class="attr">Climatizado</span></div>
+      </div>
+    </div>
+    <div class="espaco-card reveal d1">
+      <img class="espaco-img" src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=700&q=80" alt="Salão Médio">
+      <div class="espaco-shade">
+        <div class="espaco-idx">02 — Médio</div>
+        <div class="espaco-name">Salão Cristal</div>
+        <div class="espaco-cap">Até 300 convidados</div>
+        <div class="espaco-attrs"><span class="attr">Jardim Privativo</span><span class="attr">Sonorização</span></div>
+      </div>
+    </div>
+    <div class="espaco-card reveal d2">
+      <img class="espaco-img" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=700&q=80" alt="Lounge">
+      <div class="espaco-shade">
+        <div class="espaco-idx">03 — Íntimo</div>
+        <div class="espaco-name">Lounge</div>
+        <div class="espaco-cap">Até 80 convidados</div>
+        <div class="espaco-attrs"><span class="attr">Open Bar</span><span class="attr">Palco Privativo</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIA -->
+<section id="galeria">
+  <div class="galeria-hd reveal">
+    <div>
+      <span class="eyebrow" style="display:block;margin-bottom:14px;">Galeria</span>
+      <h2 class="section-title">Momentos <em>reais</em></h2>
+    </div>
+    <span class="galeria-note">Cada foto, uma história vivida aqui.</span>
+  </div>
+  <div class="gallery-grid">
+    <div class="gi reveal"><img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?w=900&q=80" alt=""><div class="gi-veil"></div></div>
+    <div class="gi reveal d1"><img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80" alt=""><div class="gi-veil"></div></div>
+    <div class="gi reveal d2"><img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80" alt=""><div class="gi-veil"></div></div>
+    <div class="gi reveal d1"><img src="https://images.unsplash.com/photo-1472653431158-6364773b2a56?w=900&q=80" alt=""><div class="gi-veil"></div></div>
+    <div class="gi reveal d2"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt=""><div class="gi-veil"></div></div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section id="depoimentos">
+  <div class="depo-wrap">
+    <div class="depo-top">
+      <div>
+        <span class="eyebrow reveal" style="display:block;margin-bottom:18px;">Depoimentos</span>
+        <h2 class="section-title reveal d1">O que dizem<br>sobre a <em>Latitud</em></h2>
+      </div>
+      <p class="section-desc reveal d2" style="text-align:left;max-width:380px;">Mais de 2.000 eventos realizados. Cada um com uma história própria. Veja o que nossos clientes dizem sobre a experiência.</p>
+    </div>
+    <div class="depo-grid">
+      <div class="depo-card reveal">
+        <div class="depo-open">"</div>
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-body">"A Latitud transformou nosso casamento em tudo que sonhamos. Cada detalhe estava impecável e a equipe cuidou de tudo com atenção e carinho."</p>
+        <div class="depo-rule"></div>
+        <div class="depo-name">Ana & Rafael Monteiro</div>
+        <div class="depo-evt">Casamento — Março 2025</div>
+      </div>
+      <div class="depo-card reveal d1">
+        <div class="depo-open">"</div>
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-body">"Realizamos nossa convenção anual aqui e o nível de profissionalismo e infraestrutura superou completamente nossas expectativas."</p>
+        <div class="depo-rule"></div>
+        <div class="depo-name">Grupo Valore Empresarial</div>
+        <div class="depo-evt">Evento Corporativo — Outubro 2025</div>
+      </div>
+      <div class="depo-card reveal d2">
+        <div class="depo-open">"</div>
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-body">"O aniversário de 15 anos da minha filha foi absolutamente mágico. Não imagino um lugar melhor para momentos tão especiais."</p>
+        <div class="depo-rule"></div>
+        <div class="depo-name">Fernanda Castellano</div>
+        <div class="depo-evt">Debutante — Dezembro 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORÇAMENTO -->
+<section id="orcamento">
+  <div class="orc-wrap">
+    <div>
+      <span class="eyebrow reveal">Contato</span>
+      <h2 class="orc-title reveal d1">Vamos planejar<br>seu <em>evento</em></h2>
+      <p class="orc-desc reveal d2">Nossa equipe está pronta para ouvir sua ideia e transformá-la em realidade. Solicite um orçamento sem compromisso.</p>
+      <div class="contact-list reveal d3">
+        <div class="c-row"><div class="c-ico">📍</div><div><div class="c-lbl">Endereço</div><div class="c-val">Estrada Geral, s/n — Interior</div></div></div>
+        <div class="c-row"><div class="c-ico">📞</div><div><div class="c-lbl">WhatsApp</div><div class="c-val">(48) 99999-0000</div></div></div>
+        <div class="c-row"><div class="c-ico">✉️</div><div><div class="c-lbl">E-mail</div><div class="c-val">contato@latitudeventos.com.br</div></div></div>
+        <div class="c-row"><div class="c-ico">🕐</div><div><div class="c-lbl">Atendimento</div><div class="c-val">Seg–Sex: 9h–18h &nbsp;|&nbsp; Sáb: 9h–13h</div></div></div>
+      </div>
+    </div>
+    <div class="form-box reveal d2">
+      <h3 class="form-title">Solicitar Orçamento</h3>
+      <p class="form-sub">Resposta em até 24 horas úteis</p>
+      <div class="f-row">
+        <div class="f-g"><label>Nome</label><input type="text" placeholder="Seu nome completo"></div>
+        <div class="f-g"><label>WhatsApp</label><input type="tel" placeholder="(00) 00000-0000"></div>
+      </div>
+      <div class="f-g"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div>
+      <div class="f-row">
+        <div class="f-g">
+          <label>Tipo de Evento</label>
+          <select><option value="" disabled selected>Selecione</option><option>Casamento</option><option>Formatura</option><option>Debutante</option><option>Evento Corporativo</option><option>Aniversário</option><option>Confraternização</option><option>Outro</option></select>
+        </div>
+        <div class="f-g">
+          <label>Nº de Convidados</label>
+          <select><option value="" disabled selected>Selecione</option><option>Até 80</option><option>81 – 300</option><option>301 – 800</option></select>
+        </div>
+      </div>
+      <div class="f-g"><label>Data do Evento</label><input type="date"></div>
+      <div class="f-g"><label>Mensagem</label><textarea placeholder="Tema, necessidades especiais, dúvidas…"></textarea></div>
+      <button class="f-submit" id="submitBtn">Enviar Solicitação</button>
+      <p class="f-note">🔒 Seus dados são confidenciais</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div>
+      <div class="ft-brand-name">Latitud</div>
+      <span class="ft-brand-tag">Chácara de Eventos</span>
+      <p class="ft-brand-p">Transformando celebrações em memórias eternas. Estrutura completa e dedicação total em cada evento.</p>
+    </div>
+    <div class="ft-col"><h4>Navegação</h4><ul><li><a href="#sobre">O Espaço</a></li><li><a href="#espacos">Ambientes</a></li><li><a href="#galeria">Galeria</a></li><li><a href="#depoimentos">Depoimentos</a></li><li><a href="#orcamento">Orçamento</a></li></ul></div>
+    <div class="ft-col"><h4>Eventos</h4><ul><li><a href="#">Casamentos</a></li><li><a href="#">Formaturas</a></li><li><a href="#">Debutantes</a></li><li><a href="#">Corporativo</a></li><li><a href="#">Aniversários</a></li></ul></div>
+    <div class="ft-col"><h4>Contato</h4><ul><li><a href="#">WhatsApp</a></li><li><a href="#">Instagram</a></li><li><a href="#">Facebook</a></li><li><a href="#">E-mail</a></li></ul></div>
+  </div>
+  <div class="ft-bottom">
+    <p class="ft-copy">© 2025 Chácara Latitud Eventos. Todos os direitos reservados.</p>
+    <div class="socials"><a href="#" class="soc">WA</a><a href="#" class="soc">IG</a><a href="#" class="soc">FB</a></div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  document.getElementById('submitBtn').addEventListener('click', function () {
+    this.textContent = '✓ Solicitação Enviada!';
+    this.style.cssText = 'background:#1a1a1a;color:#F4F4F4;border:1px solid rgba(244,244,244,0.25);';
+    setTimeout(() => { this.textContent = 'Enviar Solicitação'; this.style.cssText = ''; }, 3000);
+  });
+</script>
+</body>
+</html>
